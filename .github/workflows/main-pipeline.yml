@@ -3,15 +3,15 @@ name: "Main pipeline"
 on:
   workflow_dispatch:
   push:
-    # branches:
-      # - main
-    tags:
+     branches:
+       - main
+     tags:
       - 'v*'
 jobs:
 
   unit_tests:
     name: "Run unit tests"
-    runs-on: self-hoster-runner
+    runs-on: self-hosted-runner
 
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +20,7 @@ jobs:
 
   code_scan_security:
     name: "Run code security scan"
-    runs-on: self-hoster-runner
+    runs-on: self-hosted-runner
     steps:
 
       - uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
 
   code_lint:
     name: "Run code linters"
-    runs-on: self-hoster-runner
+    runs-on: self-hosted-runner
     steps:
 
       - uses: actions/checkout@v4
@@ -46,7 +46,7 @@ jobs:
 
   code_scan_quality:
     name: "Run code quality scan"
-    runs-on: self-hoster-runner
+    runs-on: self-hosted-runner
     needs: [ unit_tests ]
     steps:
 
@@ -62,7 +62,7 @@ jobs:
 
   deploy_dev:
     name: "Deploy and test in DEV"
-    runs-on: self-hoster-runner
+    runs-on: self-hosted-runner
     environment: dev
     needs: [ code_scan_quality, code_scan_security, code_lint ]
 
@@ -85,7 +85,7 @@ jobs:
 
   deploy_preq:
     name: "Deploy and test in PREQ"
-    runs-on: self-hoster-runner
+    runs-on: self-hosted-runner
     environment: preq
     needs: [ deploy_dev ]
 
@@ -107,7 +107,7 @@ jobs:
 
   deploy_qa:
     name: "Deploy and test in QA"
-    runs-on: self-hoster-runner
+    runs-on: self-hosted-runner
     environment: qa
     needs: [ deploy_preq ]
 
@@ -130,7 +130,7 @@ jobs:
 
   deploy_prod:
     name: "Deploy and test in PROD"
-    runs-on: self-hoster-runner
+    runs-on: self-hosted-runner
     environment: prod
     needs: [ deploy_qa ]
 
