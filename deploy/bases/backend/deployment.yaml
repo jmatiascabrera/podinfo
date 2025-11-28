@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: 745892955196.dkr.ecr.us-east-1.amazonaws.com/javier/podinfo:6.9.3
+        image: 745892955196.dkr.ecr.us-east-1.amazonaws.com/javier/podinfo:6.10.0
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
