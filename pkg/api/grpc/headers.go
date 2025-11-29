@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	pb "github.com/stefanprodan/podinfo/pkg/api/grpc/headers"
+	pb "github.com/jmatiascabrera/podinfo/pkg/api/grpc/headers"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"

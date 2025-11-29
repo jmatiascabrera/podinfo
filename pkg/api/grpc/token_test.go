@@ -6,7 +6,7 @@ import (
 	"net"
 	"testing"
 
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/token"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/token"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"

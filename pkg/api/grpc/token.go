@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/stefanprodan/podinfo/pkg/api/grpc/token"
+	pb "github.com/jmatiascabrera/podinfo/pkg/api/grpc/token"
 )
 
 type TokenServer struct {

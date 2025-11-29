@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap"
 	"os"
 
-	pb "github.com/stefanprodan/podinfo/pkg/api/grpc/env"
+	pb "github.com/jmatiascabrera/podinfo/pkg/api/grpc/env"
 )
 
 type EnvServer struct {

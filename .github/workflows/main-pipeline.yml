@@ -3,9 +3,13 @@ name: "Main pipeline"
 on:
   workflow_dispatch:
   push:
-     branches:
-       - main
-     tags:
+    paths-ignore:
+      - "**/.argocd-source-*"
+    #      - ".github/workflows/**"
+    #      - ".github/actions/**"
+    branches:
+      - main
+    tags:
       - 'v*'
 jobs:
 

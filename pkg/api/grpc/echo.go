@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/echo"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/echo"
 	"go.uber.org/zap"
 )
 

@@ -25,7 +25,7 @@ spec:
       serviceAccountName: webapp
       containers:
       - name: backend
-        image: ghcr.io/stefanprodan/podinfo:6.9.3
+        image: 745892955196.dkr.ecr.us-east-1.amazonaws.com/javier/podinfo:6.9.3
         imagePullPolicy: IfNotPresent
         ports:
         - name: http

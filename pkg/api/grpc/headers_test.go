@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/headers"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/headers"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"

@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	pb "github.com/stefanprodan/podinfo/pkg/api/grpc/status"
+	pb "github.com/jmatiascabrera/podinfo/pkg/api/grpc/status"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

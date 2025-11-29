@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	pb "github.com/stefanprodan/podinfo/pkg/api/grpc/delay"
+	pb "github.com/jmatiascabrera/podinfo/pkg/api/grpc/delay"
 	"go.uber.org/zap"
 )
 

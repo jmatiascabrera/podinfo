@@ -1,4 +1,4 @@
-module github.com/stefanprodan/podinfo
+module github.com/jmatiascabrera/podinfo
 
 go 1.25
 

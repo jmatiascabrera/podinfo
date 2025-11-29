@@ -32,12 +32,8 @@ vet:
 fmt:
 	go fmt ./...
 
-build-charts:
-	helm lint charts/*
-	helm package charts/*
-
 build-container:
-	docker build -t $(DOCKER_IMAGE_NAME):$(VERSION) .
+docker build -t $(DOCKER_IMAGE_NAME):$(VERSION) .
 
 build-xx:
 	docker buildx build \
@@ -72,18 +68,13 @@ version-set:
 	@next="$(TAG)" && \
 	current="$(VERSION)" && \
 	/usr/bin/sed -i '' "s/$$current/$$next/g" pkg/version/version.go && \
-	/usr/bin/sed -i '' "s/tag: $$current/tag: $$next/g" charts/podinfo/values.yaml && \
-	/usr/bin/sed -i '' "s/tag: $$current/tag: $$next/g" charts/podinfo/values-prod.yaml && \
-	/usr/bin/sed -i '' "s/appVersion: $$current/appVersion: $$next/g" charts/podinfo/Chart.yaml && \
-	/usr/bin/sed -i '' "s/version: $$current/version: $$next/g" charts/podinfo/Chart.yaml && \
 	/usr/bin/sed -i '' "s/podinfo:$$current/podinfo:$$next/g" kustomize/deployment.yaml && \
 	/usr/bin/sed -i '' "s/podinfo:$$current/podinfo:$$next/g" deploy/webapp/frontend/deployment.yaml && \
 	/usr/bin/sed -i '' "s/podinfo:$$current/podinfo:$$next/g" deploy/webapp/backend/deployment.yaml && \
 	/usr/bin/sed -i '' "s/podinfo:$$current/podinfo:$$next/g" deploy/bases/frontend/deployment.yaml && \
 	/usr/bin/sed -i '' "s/podinfo:$$current/podinfo:$$next/g" deploy/bases/backend/deployment.yaml && \
-	/usr/bin/sed -i '' "s/$$current/$$next/g" timoni/podinfo/values.cue && \
-	echo "Version $$next set in code, deployment, module, chart and kustomize"
-
+	echo "Version $$next set in code and kustomize deployments"
+	
 release:
 	git tag -s -m $(VERSION) $(VERSION)
 	git push origin $(VERSION)
@@ -94,6 +85,3 @@ swagger:
 	go get github.com/swaggo/swag/cmd/swag@latest
 	cd pkg/api/http && $$(go env GOPATH)/bin/swag init -g server.go
 
-.PHONY: timoni-build
-timoni-build:
-	@timoni build podinfo ./timoni/podinfo -f ./timoni/podinfo/debug_values.cue

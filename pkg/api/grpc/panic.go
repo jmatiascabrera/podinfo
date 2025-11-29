@@ -5,7 +5,7 @@ import (
 	// "log"
 	"os"
 
-	pb "github.com/stefanprodan/podinfo/pkg/api/grpc/panic"
+	pb "github.com/jmatiascabrera/podinfo/pkg/api/grpc/panic"
 	"go.uber.org/zap"
 )
 

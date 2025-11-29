@@ -8,8 +8,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/version"
-	v "github.com/stefanprodan/podinfo/pkg/version"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/version"
+	v "github.com/jmatiascabrera/podinfo/pkg/version"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/delay"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/delay"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"

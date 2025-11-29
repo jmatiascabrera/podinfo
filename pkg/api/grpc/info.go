@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"strconv"
 
-	pb "github.com/stefanprodan/podinfo/pkg/api/grpc/info"
-	"github.com/stefanprodan/podinfo/pkg/version"
+	pb "github.com/jmatiascabrera/podinfo/pkg/api/grpc/info"
+	"github.com/jmatiascabrera/podinfo/pkg/version"
 )
 
 type infoServer struct {

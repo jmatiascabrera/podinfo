@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/stefanprodan/podinfo/pkg/version"
+	"github.com/jmatiascabrera/podinfo/pkg/version"
 )
 
 func init() {

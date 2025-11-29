@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/echo"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/echo"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -12,14 +12,14 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/delay"
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/env"
-	header "github.com/stefanprodan/podinfo/pkg/api/grpc/headers"
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/info"
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/panic"
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/status"
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/token"
-	"github.com/stefanprodan/podinfo/pkg/api/grpc/version"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/delay"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/env"
+	header "github.com/jmatiascabrera/podinfo/pkg/api/grpc/headers"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/info"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/panic"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/status"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/token"
+	"github.com/jmatiascabrera/podinfo/pkg/api/grpc/version"
 )
 
 type Server struct {
