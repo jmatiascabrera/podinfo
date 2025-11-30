@@ -17,7 +17,9 @@ jobs:
     outputs:
       image_tag: ${{ steps.prep.outputs.VERSION }}
       image_repository: ${{ env.IMAGE_REPOSITORY }}
-    runs-on: self-hosted-runner-docker
+    runs-on:
+     - self-hosted-runner-docker
+     - large
     permissions:
       contents: write # needed to write releases
       id-token: write # needed for keyless signing
