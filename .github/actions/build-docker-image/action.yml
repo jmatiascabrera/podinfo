@@ -54,6 +54,11 @@ runs:
         echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
         echo "REVISION=${GITHUB_SHA}" >> $GITHUB_OUTPUT
 
+    - name: Update image tag for environment
+      shell: bash
+      run: |
+        ./.github/scripts/update-version-go.sh "${{ inputs.image_tag }}"
+
     - name: Generate images meta
       id: meta
       uses: docker/metadata-action@v5
