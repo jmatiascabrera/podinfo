@@ -20,10 +20,10 @@ Deploy the demo in the `dev` namespace:
 kustomize build ./overlays/dev | kubectl apply -f-
 ```
 
-Deploy the demo in the `staging` namespace:
+Deploy the demo in the `preq` namespace:
 
 ```bash
-kustomize build ./overlays/staging | kubectl apply -f-
+kustomize build ./overlays/preq | kubectl apply -f-
 ```
 
 Deploy the demo in the `production` namespace:

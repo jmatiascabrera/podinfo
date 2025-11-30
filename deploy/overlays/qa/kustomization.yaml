@@ -8,6 +8,7 @@ resources:
   - namespace.yaml
   - ingress.yaml
   - feature-flags.yaml
+  - ui-config.yaml
 transformers:
   - labels.yaml
 patchesStrategicMerge:

@@ -45,6 +45,12 @@ spec:
         env:
         - name: PODINFO_UI_COLOR
           value: "#34577c"
+        - name: PODINFO_UI_MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: podinfo-ui-config
+              key: message
+              optional: true
         livenessProbe:
           exec:
             command:
