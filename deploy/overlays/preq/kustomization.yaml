@@ -5,6 +5,7 @@ resources:
   - ../../bases/backend
   - ../../bases/frontend
   - ../../bases/cache
+  - ingress.yaml
   - namespace.yaml
   - ui-config.yaml
 transformers:
