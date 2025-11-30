@@ -13,3 +13,4 @@ transformers:
   - labels.yaml
 patchesStrategicMerge:
   - feature-flag-env.yaml
+  - frontend-replicas.yaml

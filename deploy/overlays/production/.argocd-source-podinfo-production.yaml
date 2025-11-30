@@ -1,3 +1,0 @@
-kustomize:
-  images:
-  - 745892955196.dkr.ecr.us-east-1.amazonaws.com/javier/podinfo:7.1.1
