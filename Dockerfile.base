@@ -1,4 +1,4 @@
-FROM golang:1.25
+FROM 745892955196.dkr.ecr.us-east-1.amazonaws.com/docker-hub/library/golang:1.25
 
 WORKDIR /workspace
 

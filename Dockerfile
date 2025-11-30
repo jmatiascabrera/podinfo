@@ -1,4 +1,4 @@
-FROM golang:1.25-alpine AS builder
+FROM 745892955196.dkr.ecr.us-east-1.amazonaws.com/docker-hub/library/golang:1.25-alpine AS builder
 
 ARG REVISION
 
@@ -18,7 +18,7 @@ RUN CGO_ENABLED=0 go build -ldflags "-s -w \
     -X github.com/jmatiascabrera/podinfo/pkg/version.REVISION=${REVISION}" \
     -a -o bin/podcli cmd/podcli/*
 
-FROM alpine:3.22
+FROM 745892955196.dkr.ecr.us-east-1.amazonaws.com/docker-hub/library/alpine:3.22
 
 ARG BUILD_DATE
 ARG VERSION

@@ -1,9 +1,9 @@
 ARG GO_VERSION=1.25
 ARG XX_VERSION=1.6.1
 
-FROM --platform=$BUILDPLATFORM tonistiigi/xx:${XX_VERSION} AS xx
+FROM --platform=$BUILDPLATFORM 745892955196.dkr.ecr.us-east-1.amazonaws.com/docker-hub/tonistiigi/xx:${XX_VERSION} AS xx
 
-FROM --platform=$BUILDPLATFORM golang:${GO_VERSION}-alpine as builder
+FROM --platform=$BUILDPLATFORM 745892955196.dkr.ecr.us-east-1.amazonaws.com/docker-hub/library/golang:${GO_VERSION}-alpine as builder
 
 # Copy the build utilities.
 COPY --from=xx / /
@@ -28,7 +28,7 @@ RUN xx-go build -ldflags "-s -w \
     -X github.com/jmatiascabrera/podinfo/pkg/version.REVISION=${REVISION}" \
     -a -o bin/podcli cmd/podcli/*
 
-FROM alpine:3.22
+FROM 745892955196.dkr.ecr.us-east-1.amazonaws.com/docker-hub/library/alpine:3.22
 
 ARG BUILD_DATE
 ARG VERSION

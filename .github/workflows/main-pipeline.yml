@@ -73,7 +73,7 @@ jobs:
 
   code_scan_security:
     name: "Run code security scan"
-    runs-on: self-hosted-runner-docker-small
+    runs-on: self-hosted-runner-docker-medium
     steps:
 
       - uses: actions/checkout@v6
@@ -121,7 +121,7 @@ jobs:
 
   end-to-end-tests:
     name: "End-to-End Tests"
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-runner-docker-medium
     needs: [ code_scan_quality, code_scan_security, unit_tests ]
     steps:
       - name: Checkout
