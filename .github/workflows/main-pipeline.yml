@@ -36,7 +36,9 @@ jobs:
     steps:
 
       - uses: actions/checkout@v6
+
       - uses: ./.github/actions/runner-cleanup
+
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
@@ -72,7 +74,7 @@ jobs:
     runs-on: self-hosted-runner-docker
     steps:
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6s
         name: Checkout code
 
       - uses: ./.github/actions/run-scan-security
@@ -86,7 +88,7 @@ jobs:
     runs-on: self-hosted-runner-docker
     steps:
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         name: Checkout code
 
       - uses: ./.github/actions/run-scan-quality
@@ -103,7 +105,7 @@ jobs:
     needs: [ code_scan_quality, code_scan_security, unit_tests ]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -149,7 +151,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -168,7 +170,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -188,7 +190,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
