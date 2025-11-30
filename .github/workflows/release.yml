@@ -101,13 +101,13 @@ jobs:
           cache-from: type=gha,scope=release-base
           cache-to: type=gha,scope=release-base,mode=max
 
-      - name: Publish release
-        uses: goreleaser/goreleaser-action@v6
-        with:
-          version: latest
-          args: release --skip=validate
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Publish release
+#        uses: goreleaser/goreleaser-action@v6
+#        with:
+#          version: latest
+#          args: release --skip=validate
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   trigger_main_pipeline:
     name: Trigger main pipeline
@@ -118,7 +118,7 @@ jobs:
       contents: read
     steps:
       - name: Dispatch main pipeline
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
