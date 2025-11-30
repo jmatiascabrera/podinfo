@@ -27,16 +27,16 @@ jobs:
 
       - uses: ./.github/actions/runner-cleanup
 
+      - name: Configure AWS credentials for ECR
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
           go-version: 1.25.x
 
-
-      - name: Configure AWS credentials for ECR
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: us-east-1
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
