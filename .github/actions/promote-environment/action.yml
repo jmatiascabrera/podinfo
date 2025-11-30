@@ -1,0 +1,46 @@
+name: Promote environment
+
+inputs:
+  environment:
+    description: "Target environment"
+    required: true
+  image_tag:
+    description: "Container image tag to promote"
+    required: true
+  image_repository:
+    description: "Full image repository (without tag)"
+    required: true
+  git_user_name:
+    description: "Git user name for commits"
+    required: false
+    default: "github-actions"
+  git_user_email:
+    description: "Git user email for commits"
+    required: false
+    default: "github-actions@users.noreply.github.com"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Sync main
+      shell: bash
+      run: |
+        git checkout main
+        git pull --ff-only origin main
+
+    - name: Update image tag for environment
+      shell: bash
+      run: |
+        ./.github/scripts/update-image-tag.sh "${{ inputs.environment }}" "${{ inputs.image_tag }}" "${{ inputs.image_repository }}"
+
+    - name: Commit and push promotion
+      shell: bash
+      run: |
+        if git diff --quiet; then
+          echo "No changes to commit for ${{ inputs.environment }}"
+          exit 0
+        fi
+        git config user.name "${{ inputs.git_user_name }}"
+        git config user.email "${{ inputs.git_user_email }}"
+        git commit -am "chore: promote image ${{ inputs.image_tag }} to ${{ inputs.environment }}"
+        git push origin HEAD:main

@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-runner-docker
     permissions:
       contents: write # needed to write releases
       id-token: write # needed for keyless signing
@@ -27,8 +27,6 @@ jobs:
       - name: Configure AWS credentials for ECR
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
@@ -49,6 +47,7 @@ jobs:
           echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
           echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "REVISION=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+
       - name: Generate images meta
         id: meta
         uses: docker/metadata-action@v5
@@ -58,6 +57,7 @@ jobs:
           tags: |
             type=raw,value=${{ steps.prep.outputs.VERSION }}
             type=raw,value=latest
+
       - name: Publish multi-arch image
         uses: docker/build-push-action@v6
         with:
@@ -72,11 +72,13 @@ jobs:
           platforms: linux/amd64,linux/arm/v7,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
       - name: Sign artifacts with Cosign
         env:
           COSIGN_EXPERIMENTAL: 1
         run: |
           cosign sign 745892955196.dkr.ecr.us-east-1.amazonaws.com/javier/podinfo:${{ steps.prep.outputs.VERSION }} --yes
+
       - name: Publish base image
         uses: docker/build-push-action@v6
         with:
@@ -86,6 +88,7 @@ jobs:
           platforms: linux/amd64
           file: ./Dockerfile.base
           tags: 745892955196.dkr.ecr.us-east-1.amazonaws.com/javier/podinfo-base:latest
+
       - name: Publish release
         uses: goreleaser/goreleaser-action@v6
         with:

@@ -21,27 +21,16 @@ jobs:
     environment: dev
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Sync main
-        run: |
-          git checkout main
-          git pull --ff-only origin main
-      - name: Update image tag for dev
-        run: |
-          ./.github/scripts/update-image-tag.sh dev "${{ inputs.image_tag }}" "${{ inputs.image_repository }}"
-      - name: Commit and push dev promotion
-        run: |
-          if git diff --quiet; then
-            echo "No changes to commit for dev"
-            exit 0
-          fi
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-          git commit -am "chore: promote image ${{ inputs.image_tag }} to dev"
-          git push origin HEAD:main
+      - name: Promote dev image
+        uses: ./.github/actions/promote-environment
+        with:
+          environment: dev
+          image_tag: ${{ inputs.image_tag }}
+          image_repository: ${{ inputs.image_repository }}
 
   promote_preq:
     name: Promote to preq
@@ -50,27 +39,16 @@ jobs:
     needs: promote_dev
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Sync main
-        run: |
-          git checkout main
-          git pull --ff-only origin main
-      - name: Update image tag for preq
-        run: |
-          ./.github/scripts/update-image-tag.sh preq "${{ inputs.image_tag }}" "${{ inputs.image_repository }}"
-      - name: Commit and push preq promotion
-        run: |
-          if git diff --quiet; then
-            echo "No changes to commit for preq"
-            exit 0
-          fi
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-          git commit -am "chore: promote image ${{ inputs.image_tag }} to preq"
-          git push origin HEAD:main
+      - name: Promote preq image
+        uses: ./.github/actions/promote-environment
+        with:
+          environment: preq
+          image_tag: ${{ inputs.image_tag }}
+          image_repository: ${{ inputs.image_repository }}
 
   promote_qa:
     name: Promote to qa
@@ -79,27 +57,16 @@ jobs:
     needs: promote_preq
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Sync main
-        run: |
-          git checkout main
-          git pull --ff-only origin main
-      - name: Update image tag for qa
-        run: |
-          ./.github/scripts/update-image-tag.sh qa "${{ inputs.image_tag }}" "${{ inputs.image_repository }}"
-      - name: Commit and push qa promotion
-        run: |
-          if git diff --quiet; then
-            echo "No changes to commit for qa"
-            exit 0
-          fi
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-          git commit -am "chore: promote image ${{ inputs.image_tag }} to qa"
-          git push origin HEAD:main
+      - name: Promote qa image
+        uses: ./.github/actions/promote-environment
+        with:
+          environment: qa
+          image_tag: ${{ inputs.image_tag }}
+          image_repository: ${{ inputs.image_repository }}
 
   promote_prod:
     name: Promote to prod
@@ -108,24 +75,13 @@ jobs:
     needs: promote_qa
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Sync main
-        run: |
-          git checkout main
-          git pull --ff-only origin main
-      - name: Update image tag for prod
-        run: |
-          ./.github/scripts/update-image-tag.sh prod "${{ inputs.image_tag }}" "${{ inputs.image_repository }}"
-      - name: Commit and push prod promotion
-        run: |
-          if git diff --quiet; then
-            echo "No changes to commit for prod"
-            exit 0
-          fi
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-          git commit -am "chore: promote image ${{ inputs.image_tag }} to prod"
-          git push origin HEAD:main
+      - name: Promote prod image
+        uses: ./.github/actions/promote-environment
+        with:
+          environment: prod
+          image_tag: ${{ inputs.image_tag }}
+          image_repository: ${{ inputs.image_repository }}

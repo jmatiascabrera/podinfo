@@ -2,15 +2,23 @@ name: "Main pipeline"
 
 on:
   workflow_dispatch:
-  push:
-    paths-ignore:
-      - "**/.argocd-source-*"
-    #      - ".github/workflows/**"
-    #      - ".github/actions/**"
-    branches:
-      - main
-    tags:
-      - 'v*'
+    inputs:
+      image_tag:
+        required: true
+        description: "Container image tag to promote"
+      image_repository:
+        required: false
+        description: "Full image repository (without tag)"
+        default: "745892955196.dkr.ecr.us-east-1.amazonaws.com/javier/podinfo"
+#  push:
+#    paths-ignore:
+#      - "**/.argocd-source-*"
+#    #      - ".github/workflows/**"
+#    #      - ".github/actions/**"
+#    branches:
+#      - main
+#    tags:
+#      - 'v*'
 jobs:
 
   unit_tests:
@@ -65,91 +73,104 @@ jobs:
 
 
   deploy_dev:
-    name: "Deploy and test in DEV"
+    name: "Deploy to DEV"
     runs-on: self-hosted-runner-docker
     environment: dev
     needs: [ code_scan_quality, code_scan_security, code_lint ]
-
     steps:
-      - uses: actions/checkout@v4
-        name: Checkout code
-
-      - uses: ./.github/actions/deploy
-        name: "Deploy to dev"
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Promote dev image
+        uses: ./.github/actions/promote-environment
         with:
           environment: dev
-          wait: 5
+          image_tag: ${{ inputs.image_tag }}
+          image_repository: ${{ inputs.image_repository }}
 
-      - uses: ./.github/actions/run-tests-integration
-        name: "Run integration tests in dev"
+
+  end-to-end-tests:
+    name: "End-to-End Tests with Kind and Kustomize"
+    runs-on: ubuntu-latest
+    needs: [ deploy_dev ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Disk Cleanup
+        uses: ./.github/actions/runner-cleanup
+      - name: Setup Kubernetes
+        uses: helm/kind-action@v1.13.0
         with:
-          environment: dev
-          wait: 2
-
+          cluster_name: kind
+      - name: Build container image
+        run: |
+          ./test/build.sh
+          kind load docker-image test/podinfo:latest
+      - name: Deploy
+        run: ./test/deploy.sh
+      - name: Run integration tests
+        run: ./test/test.sh
+      - name: Debug failure
+        if: failure()
+        run: |
+          kubectl logs -l app=podinfo || true
 
   deploy_preq:
-    name: "Deploy and test in PREQ"
+    name: "Deploy to PREQ"
     runs-on: self-hosted-runner-docker
     environment: preq
     needs: [ deploy_dev ]
 
     steps:
-      - uses: actions/checkout@v4
-        name: Checkout code
-
-      - uses: ./.github/actions/deploy
-        name: "Deploy to preq"
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Promote preq image
+        uses: ./.github/actions/promote-environment
         with:
           environment: preq
-          wait: 5
-
-      - uses: ./.github/actions/run-tests-integration
-        name: "Run integration tests in preq"
-        with:
-          environment: preq
-          wait: 2
+          image_tag: ${{ inputs.image_tag }}
+          image_repository: ${{ inputs.image_repository }}
 
   deploy_qa:
-    name: "Deploy and test in QA"
+    name: "Deploy to QA"
     runs-on: self-hosted-runner-docker
     environment: qa
     needs: [ deploy_preq ]
 
     steps:
-      - uses: actions/checkout@v4
-        name: Checkout code
-
-      - uses: ./.github/actions/deploy
-        name: "Deploy to qa"
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Promote qa image
+        uses: ./.github/actions/promote-environment
         with:
           environment: qa
-          wait: 3
-
-      - uses: ./.github/actions/run-tests-integration
-        name: "Run integration tests in qa"
-        with:
-          environment: qa
-          wait: 1
+          image_tag: ${{ inputs.image_tag }}
+          image_repository: ${{ inputs.image_repository }}
 
 
   deploy_prod:
-    name: "Deploy and test in PROD"
+    name: "Deploy to PROD"
     runs-on: self-hosted-runner-docker
     environment: prod
     needs: [ deploy_qa ]
 
     steps:
-      - uses: actions/checkout@v4
-        name: Checkout code
-
-      - uses: ./.github/actions/deploy
-        name: "Deploy to prod"
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Promote prod image
+        uses: ./.github/actions/promote-environment
         with:
           environment: prod
-          wait: 3
-
-      - uses: ./.github/actions/run-tests-integration
-        name: "Run integration tests in prod"
-        with:
-          environment: prod
-          wait: 2
+          image_tag: ${{ inputs.image_tag }}
+          image_repository: ${{ inputs.image_repository }}
