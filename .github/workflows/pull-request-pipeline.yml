@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         name: Checkout code
 
 
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         name: Checkout code
 
       - uses: ./.github/actions/run-scan-security
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         name: Checkout code
 
       - uses: ./.github/actions/run-linters
@@ -47,7 +47,7 @@ jobs:
     needs: [ unit_tests ]
     steps:
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         name: Checkout code
 
       - uses: ./.github/actions/run-scan-quality
@@ -64,7 +64,7 @@ jobs:
     needs: [ code_scan_quality, code_scan_security, code_lint ]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         name: Checkout code
 
       - uses: ./.github/actions/deploy
