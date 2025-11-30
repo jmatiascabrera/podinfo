@@ -4,22 +4,22 @@ permissions:
   contents: write
 
 on:
-#  workflow_dispatch:
-#    inputs:
-#      image_tag:
-#        required: true
-#        description: "Container image tag to promote"
-#      image_repository:
-#        required: false
-#        description: "Full image repository (without tag)"
-#        default: ""
+  #  workflow_dispatch:
+  #    inputs:
+  #      image_tag:
+  #        required: true
+  #        description: "Container image tag to promote"
+  #      image_repository:
+  #        required: false
+  #        description: "Full image repository (without tag)"
+  #        default: ""
   push:
-#    paths-ignore:
-#      - "**/.argocd-source-*"
-#    #      - ".github/workflows/**"
-#    #      - ".github/actions/**"
-#    branches:
-#      - main
+    #    paths-ignore:
+    #      - "**/.argocd-source-*"
+    #    #      - ".github/workflows/**"
+    #    #      - ".github/actions/**"
+    #    branches:
+    #      - main
     tags:
       - 'v*'
 
@@ -194,7 +194,7 @@ jobs:
     name: "Deploy to DEV"
     runs-on: self-hosted-runner-docker-small
     environment: dev
-    needs: [ code_scan_quality, code_scan_security, unit_tests ]
+    needs: [ code_scan_quality, code_scan_security, unit_tests,  build-docker-image ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
