@@ -81,9 +81,10 @@ jobs:
 
       - name: Run unit tests
         run: make test
+
       - name: Validate Kustomize overlay
         run: |
-          kubectl kustomize ./kustomize/ | kubeconform -strict -summary -kubernetes-version ${{ env.KUBERNETES_VERSION }}
+          kubectl kustomize ./kustomize/bases | kubeconform -strict -summary -kubernetes-version ${{ env.KUBERNETES_VERSION }}
       - name: Check if working tree is dirty
         run: |
           if [[ $(git diff --stat) != '' ]]; then
