@@ -1,0 +1,12 @@
+apiVersion: builtin
+kind: PrefixSuffixTransformer
+metadata:
+  name: add-dev-suffix
+suffix: -dev
+fieldSpecs:
+  - path: metadata/name
+    kind: Deployment
+  - path: metadata/name
+    kind: HorizontalPodAutoscaler
+  - path: spec/scaleTargetRef/name
+    kind: HorizontalPodAutoscaler

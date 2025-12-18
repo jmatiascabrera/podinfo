@@ -11,5 +11,6 @@ resources:
   - ui-config.yaml
 transformers:
   - labels.yaml
+  - name-suffix.yaml
 #patches:
 #  - path: feature-flag-env.yaml

@@ -10,3 +10,4 @@ resources:
   - ui-config.yaml
 transformers:
   - labels.yaml
+  - name-suffix.yaml
