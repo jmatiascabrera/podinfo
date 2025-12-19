@@ -60,7 +60,7 @@ jobs:
 
   code_scan_security:
     name: "Run code security scan"
-    runs-on: self-hosted-runner-medium
+    runs-on: self-hosted-runner-small
     steps:
 
       - uses: actions/checkout@v6
