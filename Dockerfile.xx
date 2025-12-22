@@ -8,6 +8,16 @@ FROM --platform=$BUILDPLATFORM 745892955196.dkr.ecr.us-east-1.amazonaws.com/dock
 # Copy the build utilities.
 COPY --from=xx / /
 
+RUN --mount=type=secret,id=corp_ca \
+    cat /run/secrets/corp_ca >> /etc/ssl/certs/ca-certificates.crt
+
+RUN --mount=type=cache,target=/var/cache/apk  \
+    apk add ca-certificates
+
+RUN --mount=type=secret,id=corp_ca \
+    cp /run/secrets/corp_ca /usr/local/share/ca-certificates/corp.crt && \
+    update-ca-certificates
+
 ARG TARGETPLATFORM
 ARG REVISION
 
@@ -36,10 +46,18 @@ ARG REVISION
 
 LABEL maintainer="jmatiascabrera"
 
+RUN --mount=type=secret,id=corp_ca \
+    cat /run/secrets/corp_ca >> /etc/ssl/certs/ca-certificates.crt
+
+RUN --mount=type=cache,target=/var/cache/apk  \
+    apk add ca-certificates curl netcat-openbsd
+
+RUN --mount=type=secret,id=corp_ca \
+    cp /run/secrets/corp_ca /usr/local/share/ca-certificates/corp.crt && \
+    update-ca-certificates
+
 RUN addgroup -S app \
-    && adduser -S -G app app \
-    && apk --no-cache add \
-    ca-certificates curl netcat-openbsd
+    && adduser -S -G app app
 
 WORKDIR /home/app
 

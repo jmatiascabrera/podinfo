@@ -38,6 +38,7 @@ docker build -t $(DOCKER_IMAGE_NAME):$(VERSION) .
 build-xx:
 	docker buildx build \
 	--platform=linux/amd64 \
+	--secret id=corp_ca,src=$(HOME)/work/certs/ca_bundle.pem \
 	-t $(DOCKER_IMAGE_NAME):$(VERSION) \
 	--load \
 	-f Dockerfile.xx .
@@ -74,7 +75,7 @@ version-set:
 	/usr/bin/sed -i '' "s/podinfo:$$current/podinfo:$$next/g" deploy/bases/frontend/deployment.yaml && \
 	/usr/bin/sed -i '' "s/podinfo:$$current/podinfo:$$next/g" deploy/bases/backend/deployment.yaml && \
 	echo "Version $$next set in code and kustomize deployments"
-	
+
 release:
 	git tag -s -m $(VERSION) $(VERSION)
 	git push origin $(VERSION)
@@ -84,4 +85,3 @@ swagger:
 	go get github.com/swaggo/swag/gen@latest
 	go get github.com/swaggo/swag/cmd/swag@latest
 	cd pkg/api/http && $$(go env GOPATH)/bin/swag init -g server.go
-
