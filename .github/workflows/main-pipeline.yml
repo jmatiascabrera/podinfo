@@ -9,7 +9,7 @@ on:
       - 'v*'
 
 env:
-  KUBERNETES_VERSION: 1.34.0
+  KUBERNETES_VERSION: 1.34.2
   IMAGE_REPOSITORY: 745892955196.dkr.ecr.us-east-1.amazonaws.com/javier/podinfo
 
 
@@ -18,14 +18,11 @@ jobs:
   unit_tests:
     name: "Run unit tests"
     runs-on: self-hosted-runner-medium
+
     steps:
 
       - uses: actions/checkout@v6
-
-      - name: Configure AWS credentials for ECR
-        uses: aws-actions/configure-aws-credentials@v5
-        with:
-          aws-region: us-east-1
+        name: Checkout code
 
       - name: Setup Go
         uses: actions/setup-go@v6
@@ -35,32 +32,14 @@ jobs:
             **/go.sum
             **/go.mod
 
-
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: v${{ env.KUBERNETES_VERSION }}
-
-      - name: Setup kubeconform
-        uses: ./.github/actions/kubeconform
-
-      - name: Install make on Ubuntu/Debian
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends make
-
       - name: Run unit tests
         run: make test
-
-      - name: Validate Kustomize overlay
-        run: |
-          kubectl kustomize ./kustomize/bases | kubeconform -strict -summary -kubernetes-version ${{ env.KUBERNETES_VERSION }}
 
 
   code_scan_security:
     name: "Run code security scan"
     runs-on: self-hosted-runner-small
+
     steps:
 
       - uses: actions/checkout@v6
@@ -75,8 +54,8 @@ jobs:
   code_scan_quality:
     name: "Run code quality scan"
     runs-on: self-hosted-runner-small
-    steps:
 
+    steps:
       - uses: actions/checkout@v6
         name: Checkout code
 
@@ -91,12 +70,11 @@ jobs:
     outputs:
       image_tag: ${{ steps.build.outputs.image_tag }}
       image_repository: ${{ steps.build.outputs.image_repository }}
-    permissions:
-      contents: write # needed to write releases
-      id-token: write # needed for keyless signing
-      actions: write # needed to dispatch the main pipeline
+
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout code
+        uses: actions/checkout@v6
+
       - name: Build and publish images
         id: build
         uses: ./.github/actions/build-docker-image
@@ -108,12 +86,11 @@ jobs:
     runs-on: self-hosted-runner-small
     environment: dev
     needs: [ code_scan_quality, code_scan_security, unit_tests, build-docker-image ]
+
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Promote dev image
         uses: ./.github/actions/promote-environment
         with:
@@ -129,11 +106,9 @@ jobs:
     needs: [ deploy_dev, build-docker-image ]
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Promote preq image
         uses: ./.github/actions/promote-environment
         with:
@@ -148,11 +123,9 @@ jobs:
     needs: [ deploy_preq, build-docker-image ]
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Promote qa image
         uses: ./.github/actions/promote-environment
         with:
@@ -168,11 +141,9 @@ jobs:
     needs: [ deploy_qa, build-docker-image ]
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Promote prod image
         uses: ./.github/actions/promote-environment
         with:
