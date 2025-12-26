@@ -15,6 +15,9 @@ outputs:
   image_repository:
     description: "Image repository used for the build"
     value: ${{ inputs.image_repository }}
+  digest:
+    description: "Digest of the built image"
+    value: ${{ steps.build-push.outputs.digest }}
 
 runs:
   using: composite
@@ -91,27 +94,3 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha,scope=release-multiarch
         cache-to: type=gha,scope=release-multiarch,mode=max
-
-
-
-    - name: Generate signed provenance attestation
-      uses: actions/attest-build-provenance@v3
-      with:
-        subject-name: ${{ env.IMAGE_REPOSITORY }}
-        subject-digest: ${{ steps.build-push.outputs.digest }}
-
-    - name: Publish Build info With JFrog CLI
-      env:
-        JFROG_CLI_BUILD_NAME: podinfo
-        # JFrog organization secret
-        JFROG_CLI_BUILD_NUMBER: ${{ github.run_number }}
-      shell: bash
-      run: |
-        # Collect environment variables for the build
-        jf rt build-collect-env
-
-        # Collect VCS details from git and add them to the build
-        jf rt build-add-git
-
-        # Publish build info
-        jf rt build-publish
