@@ -77,6 +77,7 @@ jobs:
 
     permissions:
       id-token: write
+      attestations: write
 
     outputs:
       image_tag: ${{ steps.build.outputs.image_tag }}
@@ -91,6 +92,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::745892955196:role/github-actions
           aws-region: us-east-1
+
 
 
       - name: Build and publish images
