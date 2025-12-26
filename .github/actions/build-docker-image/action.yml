@@ -76,6 +76,7 @@ runs:
 
     - name: Publish docker image
       uses: docker/build-push-action@v6
+      id: build-push
       with:
         sbom: true
         provenance: true
@@ -91,27 +92,13 @@ runs:
         cache-from: type=gha,scope=release-multiarch
         cache-to: type=gha,scope=release-multiarch,mode=max
 
-    - name: Setup JFrog CLI
-      uses: jfrog/setup-jfrog-cli@v4
-      env:
-        JF_URL: ${{ vars.JF_URL }}
-      with:
-        oidc-provider-name: ${{ github.repository }}@github
 
-    - name: Capture image digest
-      id: image-digest
-      env:
-        IMAGE_REF: ${{ inputs.image_repository }}:${{ steps.prep.outputs.VERSION }}
-      shell: bash
-      run: |
-        DIGEST="$(docker inspect --format='{{index .RepoDigests 0}}' "$IMAGE_REF" | cut -d@ -f2)"
-        echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
 
     - name: Generate signed provenance attestation
       uses: actions/attest-build-provenance@v3
       with:
         subject-name: ${{ env.IMAGE_REPOSITORY }}
-        subject-digest: ${{ steps.image-digest.outputs.digest }}
+        subject-digest: ${{ steps.build-push.outputs.digest }}
 
     - name: Publish Build info With JFrog CLI
       env:
