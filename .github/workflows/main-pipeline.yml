@@ -2,7 +2,6 @@ name: "Main pipeline"
 
 permissions:
   contents: write
-  id-token: write
 
 on:
   push:
@@ -73,9 +72,12 @@ jobs:
           wait: 2
 
   build-docker-image:
-
     name: "Build and push Docker image"
     runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+
     outputs:
       image_tag: ${{ steps.build.outputs.image_tag }}
       image_repository: ${{ steps.build.outputs.image_repository }}

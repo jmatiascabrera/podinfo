@@ -23,6 +23,13 @@ runs:
   using: "composite"
   steps:
 
+
+    - name: Sync main
+      shell: bash
+      run: |
+        git checkout .
+        git pull --ff-only origin main
+
     - name: Update image tag for environment
       shell: bash
       run: |
