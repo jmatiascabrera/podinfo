@@ -1,0 +1,100 @@
+name: "JFrog Release Lifecycle + Evidence"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  JF_URL: ${{ vars.JF_URL }}
+  JF_PROJECT: ${{ vars.JF_PROJECT }}
+  BUILD_NAME: podinfo
+  BUILD_NUMBER: ${{ github.run_number }}
+  DEV_REPO: podinfo-dev-local
+  STAGING_REPO: podinfo-staging-local
+  PROD_REPO: podinfo-prod-local
+  RB_NAME: podinfo-release
+  RB_VERSION: ${{ github.run_number }}
+
+jobs:
+  build-sign-promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JFrog CLI (OIDC)
+        uses: jfrog/setup-jfrog-cli@v4
+        env:
+          JF_URL: ${{ env.JF_URL }}
+        with:
+          oidc-provider-name: ${{ vars.JF_OIDC_PROVIDER }}
+
+      - name: Build artifact
+        run: |
+          make build
+          ls -la ./dist
+
+      - name: Upload to dev repo + publish build info
+        run: |
+          jf rt upload "dist/*" "${DEV_REPO}/" \
+            --build-name="${BUILD_NAME}" \
+            --build-number="${BUILD_NUMBER}" \
+            --project="${JF_PROJECT}"
+          jf rt build-publish "${BUILD_NAME}" "${BUILD_NUMBER}" \
+            --project="${JF_PROJECT}"
+
+      - name: Attach signed evidence to the build and artifacts
+        env:
+          ATTESTATION_SUBJECT: "sha256:$(sha256sum dist/* | awk '{print $1}')"
+        run: |
+          # Evidence collection: create signed attestation for build + artifacts.
+          # Replace --predicate-type/--predicate with your org standard.
+          jf evd create \
+            --subject="${ATTESTATION_SUBJECT}" \
+            --predicate-type="https://jfrog.com/evidence/slsa-provenance/v1" \
+            --predicate="{\"buildName\":\"${BUILD_NAME}\",\"buildNumber\":\"${BUILD_NUMBER}\"}" \
+            --sign \
+            --project="${JF_PROJECT}"
+
+      - name: Promote build to staging repo (candidate)
+        run: |
+          jf rt build-promote "${BUILD_NAME}" "${BUILD_NUMBER}" "${STAGING_REPO}" \
+            --status="STAGING" \
+            --comment="Promote to staging for validation" \
+            --project="${JF_PROJECT}"
+
+      - name: Create and sign release bundle (early signing)
+        run: |
+          # Signing release candidates early in SDLC for tamper protection
+          jf rbc "${RB_NAME}" "${RB_VERSION}" \
+            --builds="${BUILD_NAME}/${BUILD_NUMBER}" \
+            --sign \
+            --project="${JF_PROJECT}"
+
+      - name: Verify evidence + integrity prior to production
+        run: |
+          # Validate signed evidence and bundle integrity before prod.
+          jf evd verify \
+            --subject="${ATTESTATION_SUBJECT}" \
+            --project="${JF_PROJECT}"
+          jf rbv "${RB_NAME}" "${RB_VERSION}" \
+            --project="${JF_PROJECT}"
+
+      - name: Promote release to prod repository
+        run: |
+          jf rt build-promote "${BUILD_NAME}" "${BUILD_NUMBER}" "${PROD_REPO}" \
+            --status="PROD" \
+            --comment="Promote to prod after evidence verification" \
+            --project="${JF_PROJECT}"
+
+      - name: Distribute release bundle to prod edge
+        run: |
+          jf rbp "${RB_NAME}" "${RB_VERSION}" \
+            --site="PROD" \
+            --project="${JF_PROJECT}"
