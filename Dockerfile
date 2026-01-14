@@ -1,4 +1,4 @@
-FROM 745892955196.dkr.ecr.us-east-1.amazonaws.com/docker-hub/library/golang:1.25-alpine AS builder
+FROM 745892955196.dkr.ecr.us-east-1.amazonaws.com/golang:1.25-alpine AS builder
 
 ARG REVISION
 

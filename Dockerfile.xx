@@ -3,7 +3,7 @@ ARG XX_VERSION=1.6.1
 
 FROM --platform=$BUILDPLATFORM 745892955196.dkr.ecr.us-east-1.amazonaws.com/docker-hub/tonistiigi/xx:${XX_VERSION} AS xx
 
-FROM --platform=$BUILDPLATFORM 745892955196.dkr.ecr.us-east-1.amazonaws.com/docker-hub/library/golang:${GO_VERSION}-alpine as builder
+FROM --platform=$BUILDPLATFORM 745892955196.dkr.ecr.us-east-1.amazonaws.com/golang:${GO_VERSION}-alpine as builder
 
 # Copy the build utilities.
 COPY --from=xx / /
